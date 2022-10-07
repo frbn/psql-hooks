@@ -1,0 +1,70 @@
+digraph hooks {
+    rankdir=LR
+    node [shape=box];
+    nodesep=0.5;
+    subgraph Executor {
+        ExecutorCheckPerms_hook     [shape=ellipse];
+        ExecutorStart_hook          [shape=ellipse];
+        ExecutorRun_hook            [shape=ellipse];
+        ExecutorEnd_hook            [shape=ellipse];
+        ExecutorFinish_hook         [shape=ellipse];
+        create_upper_paths_hook     [shape=ellipse];
+        check_passsword_hook        [shape=ellipse];
+        ClientAuthentification_hook [shape=ellipse];
+        explain_get_index_name_hook [shape=ellipse];
+        emit_log_hook               [shape=ellipse];
+        ExplainOneQuery_hook        [shape=ellipse];
+        
+        
+        fmgr_hook1                   [shape=ellipse][label="fmgr_hook \n(called before)"];
+        fmgr_hook2                   [shape=ellipse][label="fmgr_hook \n(called after)"];
+        func_beg                    [shape=ellipse][label="func_beg \n(after var init)"];
+        func_end                    [shape=ellipse][label="func_end \n(CallBack)"];
+        func_setup                  [shape=ellipse][label="func_setup \n(before var init)"];
+        "Execution of a function" -> fmgr_hook1 -> func_setup  -> func_beg -> fmgr_hook2 -> func_end;
+        
+        get_attavgwidth_hook        [shape=ellipse][label="get_attavgwidth_hook \n(replace standard algorythm)"];
+        
+        get_index_stats_hook        [shape=ellipse];
+        
+        get_relation_info_hook      [shape=ellipse];
+        
+        get_relation_stats_hook     [shape=ellipse];
+        
+        join_search_hook            [shape=ellipse];
+        
+        needs_fmgr_hook             [shape=ellipse];
+        
+        object_access_hook          [shape=ellipse];
+        
+        planner_hook                [shape=ellipse];
+        
+        post_parse_analyze_hook     [shape=ellipse];
+        
+        ProcessUtility_hook         [shape=ellipse];
+        
+        row_security_policy_hook_permissive     [shape=ellipse];
+        row_security_policy_hook_restrictive    [shape=ellipse];
+        
+        set_join_pathlist_hook      [shape=ellipse];
+        set_rel_pathlist_hook       [shape=ellipse];
+        
+        shmem_startup_hook          [shape=ellipse];
+        
+        stmt_beg                    [shape=ellipse];
+        stmt_end                    [shape=ellipse];
+        stmt_beg -> stmt_end;
+        
+        
+        "Security access check to a relations list" ->  ExecutorCheckPerms_hook;
+        "end of query plan" -> ExecutorEnd_hook ;
+        "Last ExecutorRun call" -> ExecutorFinish_hook ;
+        "Beginning of execution of any query plan" -> ExecutorStart_hook -> ExecutorStart -> ExecutorRun_hook;
+    };
+    { CREATE_ROLE, ALTER_ROLE } -> check_passsword_hook ;
+    AFTER_USER_AUTHENTIFICATION -> ClientAuthentification_hook ;
+    postprocess_of_the_path_of_set_operations -> create_upper_paths_hook ;
+    create_upper_paths_hook -> contribute_path_in_relation ;
+    "want to log something" -> emit_log_hook -> "custom logging process" ;
+    
+}
