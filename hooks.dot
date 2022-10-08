@@ -7,17 +7,17 @@ digraph hooks {
         ExecutorStart_hook          [shape=ellipse];
         ExecutorRun_hook            [shape=ellipse];
         ExecutorEnd_hook            [shape=ellipse];
-        ExecutorFinish_hook         [shape=ellipse];
+        ExecutorFinish_hook [shape=ellipse][label="ExecutorFinish_hook\n(After last ExecutorRun call)"];
         create_upper_paths_hook     [shape=ellipse];
         check_passsword_hook        [shape=ellipse];
         ClientAuthentification_hook [shape=ellipse];
         explain_get_index_name_hook [shape=ellipse];
-        emit_log_hook               [shape=ellipse];
+        emit_log_hook               [shape=ellipse][label="emit_log_hook\n(custom logging process)"];
         ExplainOneQuery_hook        [shape=ellipse];
         
         
-        fmgr_hook1                   [shape=ellipse][label="fmgr_hook \n(called before)"];
-        fmgr_hook2                   [shape=ellipse][label="fmgr_hook \n(called after)"];
+        fmgr_hook1                   [shape=ellipse][label="fmgr_hook \n(security policy before)"];
+        fmgr_hook2                   [shape=ellipse][label="fmgr_hook \n(security policy after)"];
         func_beg                    [shape=ellipse][label="func_beg \n(after var init)"];
         func_end                    [shape=ellipse][label="func_end \n(CallBack)"];
         func_setup                  [shape=ellipse][label="func_setup \n(before var init)"];
@@ -50,21 +50,25 @@ digraph hooks {
         set_rel_pathlist_hook       [shape=ellipse];
         
         shmem_startup_hook          [shape=ellipse];
+        "POSTMASTER START" -> shmem_startup_hook ;
+        "BACKEND START" -> shmem_startup_hook ;
+         
         
         stmt_beg                    [shape=ellipse];
         stmt_end                    [shape=ellipse];
-        stmt_beg -> stmt_end;
+        stmt_beg -> "Statement of a function" -> stmt_end;
         
         
-        "Security access check to a relations list" ->  ExecutorCheckPerms_hook;
-        "end of query plan" -> ExecutorEnd_hook ;
-        "Last ExecutorRun call" -> ExecutorFinish_hook ;
-        "Beginning of execution of any query plan" -> ExecutorStart_hook -> ExecutorStart -> ExecutorRun_hook;
+        "Access to a relation" ->  ExecutorCheckPerms_hook;
+         
+        
+        "Beginning of execution of any query plan" -> ExecutorStart_hook -> ExecutorStart -> ExecutorRun_hook ->  ExecutorFinish_hook -> ExecutorEnd_hook -> "end of query plan";
+        
     };
     { CREATE_ROLE, ALTER_ROLE } -> check_passsword_hook ;
     AFTER_USER_AUTHENTIFICATION -> ClientAuthentification_hook ;
-    postprocess_of_the_path_of_set_operations -> create_upper_paths_hook ;
+    "postprocess of the path of set operations" -> create_upper_paths_hook ;
     create_upper_paths_hook -> contribute_path_in_relation ;
-    "want to log something" -> emit_log_hook -> "custom logging process" ;
+    "something to log" -> emit_log_hook -> "Standard log process"  ;
     
 }
