@@ -21,7 +21,8 @@ digraph hooks {
         func_beg                    [shape=ellipse][label="func_beg \n(after var init)"];
         func_end                    [shape=ellipse][label="func_end \n(CallBack)"];
         func_setup                  [shape=ellipse][label="func_setup \n(before var init)"];
-        "Execution of a function" -> fmgr_hook1 -> func_setup  -> func_beg -> fmgr_hook2 -> func_end;
+        "Execution of a function" -> fmgr_hook1 -> func_setup  -> func_beg;
+        fmgr_hook2 -> func_end;
         
         get_attavgwidth_hook        [shape=ellipse][label="get_attavgwidth_hook \n(replace standard algorythm)"];
         
@@ -58,6 +59,8 @@ digraph hooks {
         stmt_end                    [shape=ellipse];
         stmt_beg -> "Statement of a function" -> stmt_end;
         
+        func_beg -> stmt_beg;
+        stmt_end -> fmgr_hook2;
         
         "Access to a relation" ->  ExecutorCheckPerms_hook;
          
