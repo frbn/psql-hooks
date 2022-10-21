@@ -5,17 +5,17 @@
 #include "utils/elog.h"
 
 // We store previously assigned hook pointer in a global variable.
-static ClientAuthentication_hook_type original_client_auth_hook=NULL;
+static ClientAuthentication_hook_type ah_original_client_auth_hook=NULL;
 
-static void auth_delay_checks(Port *port, int status);
+static void ah_auth_delay_checks(Port *port, int status);
 
 // Our hook implementation.
-static void auth_delay_checks(Port *port, int status)
+static void ah_auth_delay_checks(Port *port, int status)
 {
     // If any other extension registered its own hook handler,
     // call it before performing our own logic.
-    if (original_client_auth_hook)
-        original_client_auth_hook(port, status);
+    if (ah_original_client_auth_hook)
+        ah_original_client_auth_hook(port, status);
 
     // If authentication failed, we wait for one second before returning
     // control to the caller.
