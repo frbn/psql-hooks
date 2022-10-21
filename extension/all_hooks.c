@@ -12,6 +12,8 @@
 // planner_hook
 #include "planner.c"
 
+// ProcessUtility_hook
+#include "processutility.c"
 
 PG_MODULE_MAGIC;
 
@@ -48,7 +50,14 @@ void _PG_init(void)
         planner_hook = ah_planner_hook;
     }
     //--------------------------    
+    // ProcessUtility_hook
+    if (ProcessUtility_hook != ah_process_utility){        
+        ah_original_ProcessUtility_hook = ProcessUtility_hook;
+        ProcessUtility_hook = ah_process_utility;
+    }
     
+    
+    //--------------------------    
 }
 
 // Called with extension unload.
@@ -70,7 +79,11 @@ void _PG_fini(void)
     //--------------------------
     // planner_hook
     planner_hook = ah_original_planner_hook;
-
+    
+    //--------------------------
+    // ProcessUtility_hook
+    ProcessUtility_hook = ah_original_ProcessUtility_hook;
+    
     
     //--------------------------
 
