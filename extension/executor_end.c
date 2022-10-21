@@ -11,14 +11,14 @@
 #include <optimizer/optimizer.h>
 #include <lib/ilist.h>
 
-static ExecutorEnd_hook_type ah_prev_ExecutorEnd = NULL;
+static ExecutorEnd_hook_type ah_original_ExecutorEnd = NULL;
 
 static void
 ah_ExecutorEnd(QueryDesc *q)
 {
     elog(WARNING,"ExecutorEnd hook called");
-  if (ah_prev_ExecutorEnd)
-    ah_prev_ExecutorEnd(q);
+  if (ah_original_ExecutorEnd)
+    ah_original_ExecutorEnd(q);
   else
     standard_ExecutorEnd(q);
 }
