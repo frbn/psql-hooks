@@ -9,6 +9,10 @@
 //ExecutorEnd_hook
 #include "executor_end.c"
 
+// planner_hook
+#include "planner.c"
+
+
 PG_MODULE_MAGIC;
 
 /* Function definitions */
@@ -21,6 +25,7 @@ void _PG_fini(void);
 // Called upon extension load.
 void _PG_init(void)
 {
+    elog(WARNING, "all_hooks init");
     //--------------------------
     // ClientAuthentication_hook
     
@@ -32,17 +37,23 @@ void _PG_init(void)
     
     //--------------------------
     // ExecutorEnd_hook
-    ah_prev_ExecutorEnd = ExecutorEnd_hook;
+    ah_original_ExecutorEnd = ExecutorEnd_hook;
     ExecutorEnd_hook = ah_ExecutorEnd;
     //--------------------------
-    
+
+    //--------------------------
+    // planner_hook
+    if (planner_hook != ah_planner_hook){
+        ah_original_planner_hook = planner_hook;
+        planner_hook = ah_planner_hook;
+    }
+    //--------------------------    
     
 }
 
 // Called with extension unload.
 void _PG_fini(void)
 {
-
     //--------------------------
     // ClientAuthentication_hook
 
@@ -52,10 +63,16 @@ void _PG_fini(void)
     
     //--------------------------
     // ExecutorEnd_hook
-    ExecutorEnd_hook = ah_prev_ExecutorEnd;
+    ExecutorEnd_hook = ah_original_ExecutorEnd;
     
     //--------------------------
 
+    //--------------------------
+    // planner_hook
+    planner_hook = ah_original_planner_hook;
+
+    
+    //--------------------------
 
 
 }
