@@ -15,6 +15,9 @@
 // ProcessUtility_hook
 #include "processutility.c"
 
+// executeCheckPerms_hook
+#include "executorcheckperms.c"
+
 PG_MODULE_MAGIC;
 
 /* Function definitions */
@@ -58,6 +61,13 @@ void _PG_init(void)
     
     
     //--------------------------    
+	// ExecutorCheckPerms_hook
+	if (ExecutorCheckPerms_hook != ah_ExecutorCheckPerms_hook){
+		ah_original_ExecutorCheckPerms_hook = ExecutorCheckPerms_hook;
+		ExecutorCheckPerms_hook = ah_ExecutorCheckPerms_hook;
+	}
+    //--------------------------    
+    //--------------------------    
 }
 
 // Called with extension unload.
@@ -84,7 +94,9 @@ void _PG_fini(void)
     // ProcessUtility_hook
     ProcessUtility_hook = ah_original_ProcessUtility_hook;
     
-    
+    //--------------------------
+	// ExecutoCheckPerms_hook
+	ExecutorCheckPerms_hook = ah_original_ExecutorCheckPerms_hook;
     //--------------------------
 
 
