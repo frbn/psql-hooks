@@ -18,6 +18,11 @@
 // executeCheckPerms_hook
 #include "executorcheckperms.c"
 
+// emit_log_hook
+#include "emitlog.c"
+
+
+
 PG_MODULE_MAGIC;
 
 /* Function definitions */
@@ -35,13 +40,16 @@ void _PG_init(void)
     // ClientAuthentication_hook
     
     // Save the original hook value.
+	elog(WARNING,"hooking: ClientAuthentication_hook");
     ah_original_client_auth_hook = ClientAuthentication_hook;
+
     // Register our handler.
     ClientAuthentication_hook = ah_auth_delay_checks;
     //--------------------------
     
     //--------------------------
     // ExecutorEnd_hook
+	elog(WARNING,"hooking: emit_log_hook");
     ah_original_ExecutorEnd = ExecutorEnd_hook;
     ExecutorEnd_hook = ah_ExecutorEnd;
     //--------------------------
@@ -49,12 +57,14 @@ void _PG_init(void)
     //--------------------------
     // planner_hook
     if (planner_hook != ah_planner_hook){
+		elog(WARNING,"hooking: planner_hook");
         ah_original_planner_hook = planner_hook;
         planner_hook = ah_planner_hook;
     }
     //--------------------------    
     // ProcessUtility_hook
     if (ProcessUtility_hook != ah_process_utility){        
+		elog(WARNING,"hooking: ProcessUtility_hook");
         ah_original_ProcessUtility_hook = ProcessUtility_hook;
         ProcessUtility_hook = ah_process_utility;
     }
@@ -63,10 +73,23 @@ void _PG_init(void)
     //--------------------------    
 	// ExecutorCheckPerms_hook
 	if (ExecutorCheckPerms_hook != ah_ExecutorCheckPerms_hook){
+		elog(WARNING,"hooking: ExecutorCheckPerms_hook");
 		ah_original_ExecutorCheckPerms_hook = ExecutorCheckPerms_hook;
 		ExecutorCheckPerms_hook = ah_ExecutorCheckPerms_hook;
 	}
+    
     //--------------------------    
+	// emit_log_hook
+	if (emit_log_hook != ah_original_emit_log_hook){
+		elog(WARNING,"hooking: hooking emit_log");
+		ah_original_emit_log_hook = emit_log_hook;
+		emit_log_hook = ah_emit_log_hook;
+	}    
+    //--------------------------    
+    
+    //--------------------------    
+    
+    
     //--------------------------    
 }
 
@@ -97,7 +120,10 @@ void _PG_fini(void)
     //--------------------------
 	// ExecutoCheckPerms_hook
 	ExecutorCheckPerms_hook = ah_original_ExecutorCheckPerms_hook;
+
     //--------------------------
+	// emit_log_hook
+	emit_log_hook = ah_original_emit_log_hook;
 
-
+    //--------------------------
 }
