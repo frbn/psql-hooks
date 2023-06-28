@@ -16,11 +16,9 @@ static ExecutorEnd_hook_type ah_original_ExecutorEnd = NULL;
 static void
 ah_ExecutorEnd(QueryDesc *q)
 {
-    elog(WARNING,"ExecutorEnd hook called");
+    elog(DEBUG1,"ExecutorEnd hook called");
   if (ah_original_ExecutorEnd)
     ah_original_ExecutorEnd(q);
   else
     standard_ExecutorEnd(q);
 }
-
-
