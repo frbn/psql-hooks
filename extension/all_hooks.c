@@ -24,7 +24,8 @@
 //ExecutorEnd_hook
 #include "executor_end.c"
 
-
+//needs_fmgr_hook
+#include "needs_fmgr.c"
 // planner_hook
 #include "planner.c"
 
@@ -115,11 +116,17 @@ void _PG_init(void)
     //--------------------------
 	// emit_log_hook
 	if (emit_log_hook != ah_original_emit_log_hook){
-		elog(WARNING,"hooking: hooking emit_log");
+		elog(WARNING,"hooking: emit_log_hook");
 		ah_original_emit_log_hook = emit_log_hook;
 		emit_log_hook = ah_emit_log_hook;
 	}
-    //--------------------------
+  //--------------------------
+  // needs_fmgr_hook
+  if (needs_fmgr_hook != ah_original_needs_fmgr_hook){
+    elog(WARNING,"hooking: needs_fmgr_hook");
+    ah_original_needs_fmgr_hook = needs_fmgr_hook;
+    needs_fmgr_hook = ah_needs_fmgr_hook;
+  }
 
     //--------------------------
 
