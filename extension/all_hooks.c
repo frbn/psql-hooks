@@ -106,6 +106,12 @@ void _PG_init(void)
 		ExecutorCheckPerms_hook = ah_ExecutorCheckPerms_hook;
 	}
 
+  //ExecutorFinish_hook_type
+  if (ExecutorFinish_hook != ah_ExecutorFinish_hook){
+    elog(WARNING,"hooking: ExecutorFinish_hook");
+    ah_original_ExecutorFinish_hook = ExecutorFinish_hook;
+    ExecutorFinish_hook = ah_ExecutorFinish_hook;
+  }
     //--------------------------
 	// emit_log_hook
 	if (emit_log_hook != ah_original_emit_log_hook){
