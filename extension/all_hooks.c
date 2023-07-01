@@ -131,34 +131,17 @@ void _PG_init(void)
 // Called with extension unload.
 void _PG_fini(void)
 {
-    //--------------------------
-    // ClientAuthentication_hook
-
     // Return back the original hook value.
     ClientAuthentication_hook = ah_original_client_auth_hook;
-    //--------------------------
-
-    //--------------------------
-    // ExecutorEnd_hook
     ExecutorEnd_hook = ah_original_ExecutorEnd_hook;
-
-    //--------------------------
-
-    //--------------------------
-    // planner_hook
     planner_hook = ah_original_planner_hook;
-
-    //--------------------------
-    // ProcessUtility_hook
     ProcessUtility_hook = ah_original_ProcessUtility_hook;
+    ExecutorStart_hook = ah_original_ExecutorStart_hook;
+    ExecutorRun_hook = ah_original_ExecutorRun_hook;
+    ExecutorEnd_hook = ah_original_ExecutorEnd_hook;
+    ExecutorFinish_hook = ah_original_ExecutorFinish_hook;
+	  ExecutorCheckPerms_hook = ah_original_ExecutorCheckPerms_hook;
+	  emit_log_hook = ah_original_emit_log_hook;
+    check_password_hook = ah_original_check_password_hook;
 
-    //--------------------------
-	// ExecutoCheckPerms_hook
-	ExecutorCheckPerms_hook = ah_original_ExecutorCheckPerms_hook;
-
-    //--------------------------
-	// emit_log_hook
-	emit_log_hook = ah_original_emit_log_hook;
-
-    //--------------------------
 }
