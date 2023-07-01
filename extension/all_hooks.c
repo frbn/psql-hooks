@@ -26,6 +26,9 @@
 
 //needs_fmgr_hook
 #include "needs_fmgr.c"
+//fmgr_hook
+#include "fmgr.c"
+
 // planner_hook
 #include "planner.c"
 
@@ -77,7 +80,7 @@ void _PG_init(void)
   // ProcessUtility_hook
 	elog(WARNING,"hooking: ProcessUtility_hook");
   ah_original_ProcessUtility_hook = ProcessUtility_hook;
-  ProcessUtility_hook = ah_process_utility;
+  ProcessUtility_hook = ah_ProcessUtility_hook;
 
 
   //--------------------------
@@ -112,12 +115,19 @@ void _PG_init(void)
 	// 	elog(WARNING,"hooking: emit_log_hook");
 	// 	ah_original_emit_log_hook = emit_log_hook;
 	// 	emit_log_hook = ah_emit_log_hook;
+
+
   //--------------------------
   // needs_fmgr_hook
   elog(WARNING,"hooking: needs_fmgr_hook");
   ah_original_needs_fmgr_hook = needs_fmgr_hook;
   needs_fmgr_hook = ah_needs_fmgr_hook;
 
+  //--------------------------
+  // fmgr_hook
+  elog(WARNING,"hooking: fmgr_hook");
+  ah_original_fmgr_hook = fmgr_hook;
+  fmgr_hook = ah_fmgr_hook;
   //--------------------------
   // check_password_hook
 
