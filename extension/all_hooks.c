@@ -152,6 +152,7 @@ void _PG_fini(void)
     ExecutorFinish_hook = ah_original_ExecutorFinish_hook;
 	  ExecutorCheckPerms_hook = ah_original_ExecutorCheckPerms_hook;
 	  emit_log_hook = ah_original_emit_log_hook;
+    fmgr_hook = ah_original_fmgr_hook;
     check_password_hook = ah_original_check_password_hook;
 
 }
