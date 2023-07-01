@@ -52,104 +52,80 @@ void _PG_fini(void);
 void _PG_init(void)
 {
   elog(WARNING, "all_hooks init");
+
   //--------------------------
   // ClientAuthentication_hook
-
-  // Save the original hook value.
 	elog(WARNING,"hooking: ClientAuthentication_hook");
   ah_original_client_auth_hook = ClientAuthentication_hook;
-
-  // Register our handler.
   ClientAuthentication_hook = ah_auth_delay_checks;
-  //--------------------------
+
 
   //--------------------------
   // ExecutorEnd_hook
 	// elog(WARNING,"hooking: emit_log_hook");
-  // if (emit_log_hook == NULL) elog(DEBUG1,"emit_log_hook is null");
   // ah_original_emit_log_hook = emit_log_hook;
   // emit_log_hook = ah_emit_log_hook;
   //--------------------------
 
   //--------------------------
   // planner_hook
-  if (planner_hook != ah_planner_hook){
-	   elog(WARNING,"hooking: planner_hook");
-     ah_original_planner_hook = planner_hook;
-        planner_hook = ah_planner_hook;
-  }
+  elog(WARNING,"hooking: planner_hook");
+  ah_original_planner_hook = planner_hook;
+  planner_hook = ah_planner_hook;
+
   //--------------------------
   // ProcessUtility_hook
-  if (ProcessUtility_hook != ah_process_utility){
-		elog(WARNING,"hooking: ProcessUtility_hook");
-    ah_original_ProcessUtility_hook = ProcessUtility_hook;
-    ProcessUtility_hook = ah_process_utility;
-  }
+	elog(WARNING,"hooking: ProcessUtility_hook");
+  ah_original_ProcessUtility_hook = ProcessUtility_hook;
+  ProcessUtility_hook = ah_process_utility;
 
 
   //--------------------------
   // ExecutorStart_hook
-  if (ExecutorStart_hook != ah_ExecutorStart_hook){
-		elog(WARNING,"hooking: ExecutorStart_hook");
-		ah_original_ExecutorStart_hook = ExecutorStart_hook;
-		ExecutorStart_hook = ah_ExecutorStart_hook;
-	}
+	elog(WARNING,"hooking: ExecutorStart_hook");
+	ah_original_ExecutorStart_hook = ExecutorStart_hook;
+	ExecutorStart_hook = ah_ExecutorStart_hook;
 
   //ExecutorRun_hook
-  if (ExecutorRun_hook != ah_ExecutorRun_hook){
-      elog(WARNING,"hooking: ExecutorRun_hook");
-      ah_original_ExecutorRun_hook = ExecutorRun_hook;
-      ExecutorRun_hook = ah_ExecutorRun_hook;
-    }
+  elog(WARNING,"hooking: ExecutorRun_hook");
+  ah_original_ExecutorRun_hook = ExecutorRun_hook;
+  ExecutorRun_hook = ah_ExecutorRun_hook;
 
-    //ExecutorEnd_hook
-    if (ExecutorEnd_hook != ah_ExecutorEnd_hook){
-      elog(WARNING,"hooking: ExecutorEnd_hook");
-      ah_original_ExecutorEnd_hook = ExecutorEnd_hook;
-      ExecutorEnd_hook = ah_ExecutorEnd_hook;
-    }
-
+  //ExecutorEnd_hook
+  elog(WARNING,"hooking: ExecutorEnd_hook");
+  ah_original_ExecutorEnd_hook = ExecutorEnd_hook;
+  ExecutorEnd_hook = ah_ExecutorEnd_hook;
 
 	// ExecutorCheckPerms_hook
-	if (ExecutorCheckPerms_hook != ah_ExecutorCheckPerms_hook){
-		elog(WARNING,"hooking: ExecutorCheckPerms_hook");
-		ah_original_ExecutorCheckPerms_hook = ExecutorCheckPerms_hook;
-		ExecutorCheckPerms_hook = ah_ExecutorCheckPerms_hook;
-	}
+	elog(WARNING,"hooking: ExecutorCheckPerms_hook");
+	ah_original_ExecutorCheckPerms_hook = ExecutorCheckPerms_hook;
+	ExecutorCheckPerms_hook = ah_ExecutorCheckPerms_hook;
 
   //ExecutorFinish_hook_type
-  if (ExecutorFinish_hook != ah_ExecutorFinish_hook){
-    elog(WARNING,"hooking: ExecutorFinish_hook");
-    ah_original_ExecutorFinish_hook = ExecutorFinish_hook;
-    ExecutorFinish_hook = ah_ExecutorFinish_hook;
-  }
+  elog(WARNING,"hooking: ExecutorFinish_hook");
+  ah_original_ExecutorFinish_hook = ExecutorFinish_hook;
+  ExecutorFinish_hook = ah_ExecutorFinish_hook;
   //--------------------------
 	// emit_log_hook
   // FIXME : the next block kills the backend
 
-  // if (emit_log_hook != ah_emit_log_hook){
 	// 	elog(WARNING,"hooking: emit_log_hook");
 	// 	ah_original_emit_log_hook = emit_log_hook;
 	// 	emit_log_hook = ah_emit_log_hook;
-	// }
   //--------------------------
   // needs_fmgr_hook
-  if (needs_fmgr_hook != ah_needs_fmgr_hook){
-    elog(WARNING,"hooking: needs_fmgr_hook");
-    ah_original_needs_fmgr_hook = needs_fmgr_hook;
-    needs_fmgr_hook = ah_needs_fmgr_hook;
-  }
+  elog(WARNING,"hooking: needs_fmgr_hook");
+  ah_original_needs_fmgr_hook = needs_fmgr_hook;
+  needs_fmgr_hook = ah_needs_fmgr_hook;
 
   //--------------------------
   // check_password_hook
 
-  // if (check_password_hook != ah_check_password_hook){
-    elog(WARNING,"hooking: check_password_hook");
-    ah_original_check_password_hook = check_password_hook;
-    check_password_hook = ah_check_password_hook;
-  // }
+  elog(WARNING,"hooking: check_password_hook");
+  ah_original_check_password_hook = check_password_hook;
+  check_password_hook = ah_check_password_hook;
 
-    //--------------------------
+  //--------------------------
 }
 
 // Called with extension unload.
