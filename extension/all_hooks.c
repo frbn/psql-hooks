@@ -3,10 +3,6 @@
 #include "fmgr.h"
 #include "utils/elog.h"
 
-//ClientAuthentication_hook
-#include "auth.c"
-
-
 // Executor
 
 // executeCheckPerms_hook
@@ -42,6 +38,9 @@
 //check_password_hook
 #include "check_password.c"
 
+//ClientAuthentication_hook
+#include "client_authentication.c"
+
 PG_MODULE_MAGIC;
 
 /* Function definitions */
@@ -56,34 +55,18 @@ void _PG_init(void)
 {
   elog(WARNING, "all_hooks init");
 
-  //--------------------------
-  // ClientAuthentication_hook
-	elog(WARNING,"hooking: ClientAuthentication_hook");
-  ah_original_client_auth_hook = ClientAuthentication_hook;
-  ClientAuthentication_hook = ah_auth_delay_checks;
 
-
-  //--------------------------
-  // ExecutorEnd_hook
-	// elog(WARNING,"hooking: emit_log_hook");
-  // ah_original_emit_log_hook = emit_log_hook;
-  // emit_log_hook = ah_emit_log_hook;
-  //--------------------------
-
-  //--------------------------
   // planner_hook
   elog(WARNING,"hooking: planner_hook");
   ah_original_planner_hook = planner_hook;
   planner_hook = ah_planner_hook;
 
-  //--------------------------
   // ProcessUtility_hook
 	elog(WARNING,"hooking: ProcessUtility_hook");
   ah_original_ProcessUtility_hook = ProcessUtility_hook;
   ProcessUtility_hook = ah_ProcessUtility_hook;
 
 
-  //--------------------------
   // ExecutorStart_hook
 	elog(WARNING,"hooking: ExecutorStart_hook");
 	ah_original_ExecutorStart_hook = ExecutorStart_hook;
@@ -108,41 +91,42 @@ void _PG_init(void)
   elog(WARNING,"hooking: ExecutorFinish_hook");
   ah_original_ExecutorFinish_hook = ExecutorFinish_hook;
   ExecutorFinish_hook = ah_ExecutorFinish_hook;
-  //--------------------------
-	// emit_log_hook
-  // FIXME : the next block kills the backend
 
-	// 	elog(WARNING,"hooking: emit_log_hook");
-	// 	ah_original_emit_log_hook = emit_log_hook;
-	// 	emit_log_hook = ah_emit_log_hook;
-
-
-  //--------------------------
   // needs_fmgr_hook
   elog(WARNING,"hooking: needs_fmgr_hook");
   ah_original_needs_fmgr_hook = needs_fmgr_hook;
   needs_fmgr_hook = ah_needs_fmgr_hook;
 
-  //--------------------------
   // fmgr_hook
   elog(WARNING,"hooking: fmgr_hook");
   ah_original_fmgr_hook = fmgr_hook;
   fmgr_hook = ah_fmgr_hook;
-  //--------------------------
+
   // check_password_hook
 
   elog(WARNING,"hooking: check_password_hook");
   ah_original_check_password_hook = check_password_hook;
   check_password_hook = ah_check_password_hook;
 
-  //--------------------------
+  // ClientAuthentication_hook
+  elog(WARNING,"hooking: ClientAuthentication_hook");
+  ah_original_client_authentication_hook = ClientAuthentication_hook;
+  ClientAuthentication_hook = ah_ClientAuthentication_hook;
+
+
+  // emit_log_hook
+  elog(WARNING,"hooking: emit_log_hook");
+  ah_original_emit_log_hook = emit_log_hook;
+  emit_log_hook = ah_emit_log_hook;
+
+
 }
 
 // Called with extension unload.
 void _PG_fini(void)
 {
     // Return back the original hook value.
-    ClientAuthentication_hook = ah_original_client_auth_hook;
+    ClientAuthentication_hook = ah_original_client_authentication_hook;
     ExecutorEnd_hook = ah_original_ExecutorEnd_hook;
     planner_hook = ah_original_planner_hook;
     ProcessUtility_hook = ah_original_ProcessUtility_hook;
