@@ -1,0 +1,41 @@
+ClientAuthentication_hook_type
+
+  ExecutorCheckPerms_hook_type
+  ExecutorEnd_hook_type
+  ExecutorFinish_hook_type
+  ExecutorRun_hook_type
+  ExecutorStart_hook_type
+
+ExplainOneQuery_hook_type
+
+  ProcessUtility_hook_type
+
+  check_password_hook_type
+
+create_upper_paths_hook_type
+
+  emit_log_hook_type
+
+explain_get_index_name_hook_type
+
+  fmgr_hook_type
+
+get_attavgwidth_hook_type
+get_index_stats_hook_type
+get_relation_info_hook_type
+get_relation_stats_hook_type
+join_search_hook_type
+
+  needs_fmgr_hook_type
+
+object_access_hook_type
+object_access_hook_type_str
+
+  planner_hook_type
+
+post_parse_analyze_hook_type
+row_security_policy_hook_type
+set_join_pathlist_hook_type
+set_rel_pathlist_hook_type
+shmem_request_hook_type
+shmem_startup_hook_type
