@@ -2,14 +2,22 @@
 
 static emit_log_hook_type ah_original_emit_log_hook = NULL;
 
-void ah_emit_log_hook(ErrorData* );
+static void ah_emit_log_hook(ErrorData* );
 
 void ah_emit_log_hook(ErrorData * eData){
 
-//TODO : explain why it doesn't work
-	elog(WARNING, "emit_log_hook called");
+  static bool in_hook = false;
+
 	if (ah_original_emit_log_hook){
 		ah_original_emit_log_hook(eData);
+	}
+
+	// elog(WARNING, "ah_emit_log_hook called");
+
+	if (! in_hook){
+		in_hook = true;
+		// elog(WARNING, "ah_emit_log_hook called");
+	  in_hook = false;
 	}
 
 
