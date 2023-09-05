@@ -1,4 +1,4 @@
-ClientAuthentication_hook_type
+  ClientAuthentication_hook_type
 
   ExecutorCheckPerms_hook_type
   ExecutorEnd_hook_type
