@@ -24,7 +24,7 @@ registered its own hook handler. If that's the case, we'd like to call it in
 our hook so that this extension can operate without errors. Any well-designed
 plugin will do such hook chaining.
 
-To pop the state of the hook created by one extension `_PG_fini` function must be implemented, 
+To pop the state of the hook created by one extension `_PG_fini` function must be implemented,
 which is basically recovers hook to it's value before `_PG_init`.
 
 A standard example on how to use hooks is the `auth_delay` plugin.
@@ -79,6 +79,8 @@ void _PG_fini(void)
 * [PL/pgsql Hooks](#plpgsql-hooks)
 
 
+----
+
 ## General Hooks
 
 
@@ -110,6 +112,7 @@ flags.
 
 [emit_log_hook_1]: https://github.com/postgres/postgres/blob/master/src/backend/utils/error/elog.c#L1456
 
+----
 
 <a name="shmem_startup_hook" href="#shmem_startup_hook">#</a> <i>void</i> <b>shmem_startup_hook</b>() [<>](https://github.com/postgres/postgres/blob/master/src/include/storage/ipc.h#L78 "Source")
 
@@ -129,6 +132,7 @@ via `on_shmem_exit`.
 
 Check out the `pg_stat_statements` code to get the idea on how to implement
 this hook correctly.
+
 
 
 ## Security Hooks
@@ -159,6 +163,7 @@ isn't strong enough.
 * <i>bool</i> <b>validuntil_null</b> — a flag that is true if and only if
   the password have no expiration date (i.e. a null date is passed).
 
+----
 
 <a name="ClientAuthentication_hook" href="#ClientAuthentication_hook">#</a> <i>void</i> <b>ClientAuthentication_hook</b>(port, status) [<>](https://github.com/postgres/postgres/blob/master/src/include/libpq/auth.h#L29 "Source")
 
@@ -179,6 +184,7 @@ check failure will close the connection without calling this hook.
 * <i>int</i> <b>status</b> — a standard status code. `STATUS_OK` (`0`)
   if authentication successful.
 
+----
 
 <a name="ExecutorCheckPerms_hook" href="#ExecutorCheckPerms_hook">#</a> <i>bool</i> <b>ExecutorCheckPerms_hook</b>(rangeTabls, abort) [<>](https://github.com/postgres/postgres/blob/master/src/include/executor/executor.h#L85 "Source")
 
@@ -208,6 +214,8 @@ Join, subquery, and special RTEs need no checks.
 `true` if user have privileges to access given relations, `false` or raise an
 error otherwise, depending on the `abort` flag.
 
+
+----
 
 <a name="object_access_hook" href="#object_access_hook">#</a> <i>void</i> <b>object_access_hook</b>(access, classId, objectId, subId, arg) [<>](https://github.com/postgres/postgres/blob/master/src/include/catalog/objectaccess.h#L138 "Source")
 
@@ -286,6 +294,7 @@ extensions access is only allowed if all extensions agree.
 For `OAT_FUNCTION_EXECUTE` type, `subId` and `arg` are unused, and
 `classId` is always `ProcedureRelationId`.
 
+----
 
 <a name="row_security_policy_hook_permissive" href="#row_security_policy_hook_permissive">#</a> <i>List *</i> <b>row_security_policy_hook_permissive</b>(cmdtype, relation) [<>](https://github.com/postgres/postgres/blob/master/src/include/rewrite/rowsecurity.h#L40 "Source")
 
@@ -308,6 +317,7 @@ access and any permissive policy grant access.
 List of additional permissive policies that will be added to the list of
 default permissive policies.
 
+----
 
 <a name="row_security_policy_hook_restrictive" href="#row_security_policy_hook_restrictive">#</a> <i>List *</i> <b>row_security_policy_hook_restrictive</b>(cmdtype, relation) [<>](https://github.com/postgres/postgres/blob/master/src/include/rewrite/rowsecurity.h#L42 "Source")
 
@@ -353,6 +363,7 @@ Note that hooked functions are not inlined.
 
 Return `true` if you want to hook enter/exit event for this function.
 
+----
 
 <a name="fmgr_hook" href="#fmgr_hook">#</a> <i>void</i> <b>fmgr_hook</b>(event, flinfo, arg) [<>](https://github.com/postgres/postgres/blob/master/src/include/fmgr.h#L776 "Source")
 
@@ -401,6 +412,7 @@ so that plans involving hypothetical indexes can be explained.
 Name of the index or `NULL`. In the later case, a default name
 will be generated.
 
+----
 
 <a name="ExplainOneQuery_hook" href="#ExplainOneQuery_hook">#</a> <i>void</i> <b>ExplainOneQuery_hook</b>(query, cursorOptions, into, es, queryString, params, queryEnv) [<>](https://github.com/postgres/postgres/blob/master/src/include/commands/explain.h#L72 "Source")
 
@@ -431,6 +443,7 @@ delegate printing to the `ExplainOnePlan()` function.
 This hook does not produce any output.
 
 
+----
 
 <a name="get_attavgwidth_hook" href="#get_attavgwidth_hook">#</a> <i>int32</i> <b>get_attavgwidth_hook</b>(relid, attnum) [<>](https://github.com/postgres/postgres/blob/master/src/include/utils/lsyscache.h#L66 "Source")
 
@@ -450,6 +463,7 @@ Otherwise, the default algorithm is invoked.
 Average width of entries in the given column of the given relation or zero
 to fall back to the default algorithm.
 
+----
 
 <a name="get_index_stats_hook" href="#get_index_stats_hook">#</a> <i>bool</i> <b>get_index_stats_hook</b>(root, indexOid, indexattnum, vardata) [<>](https://github.com/postgres/postgres/blob/master/src/include/utils/selfuncs.h#L146 "Source")
 
@@ -472,6 +486,7 @@ It will simply overwrite them.
 * <i>AttrNumber</i> <b>indexattnum</b> — index column.
 * <i>VariableStatData *</i> <b>vardata</b> — container for the return value.
 
+----
 
 <a name="get_relation_info_hook" href="#get_relation_info_hook">#</a> <i>void</i> <b>get_relation_info_hook</b>(root, relationObjectId, inhparent, rel) [<>](https://github.com/postgres/postgres/blob/master/src/include/optimizer/plancat.h#L25 "Source")
 
@@ -493,6 +508,7 @@ index to the `indexlist`.
   isn't important for it.
 * <i>RelOptInfo *</i> <b>rel</b> — relation info that can be adjusted.
 
+----
 
 <a name="get_relation_stats_hook" href="#get_relation_stats_hook">#</a> <i>bool</i> <b>get_relation_stats_hook</b>(root, rte, attnum, vardata) [<>](https://github.com/postgres/postgres/blob/master/src/include/utils/selfuncs.h#L141 "Source")
 
@@ -511,12 +527,13 @@ See `get_index_stats_hook` for more details.
 * <i>AttrNumber</i> <b>indexattnum</b> — index column.
 * <i>VariableStatData *</i> <b>vardata</b> — container for the return value.
 
+----
 
 <a name="planner_hook" href="#planner_hook">#</a> <i>PlannedStmt *</i> <b>planner_hook</b>(parse, query_string, cursorOptions, boundParams) [<>](https://github.com/postgres/postgres/blob/master/src/include/optimizer/planner.h#L30 "Source")
 
 Called in query optimizer entry point.
 
-If set, replaces standard planner. Consider inclusion of the standard planner to hook 
+If set, replaces standard planner. Consider inclusion of the standard planner to hook
 if this hook assuming just pre-process or post-process for builtin planner.
 
 *Inputs:*
@@ -526,12 +543,13 @@ if this hook assuming just pre-process or post-process for builtin planner.
 * <i>int</i> <b>cursorOptions</b>
 * <i>ParamListInfo</i> <b>boundParams</b>
 
+----
 
 <a name="join_search_hook" href="#join_search_hook">#</a> <i>RelOptInfo *</i> <b>join_search_hook</b>(root, levels_needed, initial_rels) [<>](https://github.com/postgres/postgres/blob/master/src/include/optimizer/paths.h#L49 "Source")
 
 Called when optimiser chooses order for join relations.
 
-When the hook is set, replaces GEQO or standard join search. 
+When the hook is set, replaces GEQO or standard join search.
 
 *Inputs:*
 
@@ -539,12 +557,13 @@ When the hook is set, replaces GEQO or standard join search.
 * <i>int</i> <b>levels_needed</b> — the number of child joinlist nodes.
 * <i>List *</i> <b>initial_rels</b> — list of join relations.
 
+----
 
 <a name="set_rel_pathlist_hook" href="#set_rel_pathlist_hook">#</a> <i>void</i> <b>set_rel_pathlist_hook</b>(root, rel, rti, rte) [<>](https://github.com/postgres/postgres/blob/master/src/include/optimizer/paths.h#L34 "Source")
 
 Called at the end of building access paths for a base relation.
 
-The hook can apply changes to set of paths by adding new paths or deleting them. 
+The hook can apply changes to set of paths by adding new paths or deleting them.
 
 *Inputs:*
 
@@ -553,6 +572,7 @@ The hook can apply changes to set of paths by adding new paths or deleting them.
 * <i>Index</i> <b>rti</b> - range table index.
 * <i>RangeTblEntry *</i> <b>rte</b> range table entry.
 
+----
 
 <a name="set_join_pathlist_hook" href="#set_join_pathlist_hook">#</a> <i>void</i> <b>set_join_pathlist_hook</b>(root, joinrel, outerrel, innerrel, jointype, extra) [<>](https://github.com/postgres/postgres/blob/master/src/include/optimizer/paths.h#L43 "Source")
 
@@ -569,12 +589,13 @@ The hook can manipulate path list to perform a postprocess for best paths.
 * <i>JoinType</i> <b>jointype</b> - the type of a join.
 * <i>JoinPathExtraData *</i> <b>extra</b>
 
+----
 
 <a name="create_upper_paths_hook" href="#create_upper_paths_hook">#</a> <i>void</i> <b>create_upper_paths_hook</b>(root, stage, input_rel, output_rel) [<>](https://github.com/postgres/postgres/blob/master/src/include/optimizer/planner.h#L38 "Source")
 
 Called when postprocess of the path of set operations occurs.
 
-It's a possibility for extensions to contribute path in relation. 
+It's a possibility for extensions to contribute path in relation.
 
 *Inputs:*
 
@@ -583,13 +604,14 @@ It's a possibility for extensions to contribute path in relation.
 * <i>RelOptInfo *</i> <b>input_rel</b>
 * <i>RelOptInfo *</i> <b>output_rel</b>
 
+----
 
 <a name="post_parse_analyze_hook" href="#post_parse_analyze_hook">#</a> <i>void</i> <b>post_parse_analyze_hook</b>(pstate, query) [<>](https://github.com/postgres/postgres/blob/master/src/include/parser/analyze.h#L25 "Source")
 
 Called when parse analyze goes, right after performing transformTopLevelStmt().
 
-Used in several internal methods: 
-[pg_analyze_and_rewrite_params()](https://github.com/postgres/postgres/blob/src/backend/tcop/postgres.c#L686), 
+Used in several internal methods:
+[pg_analyze_and_rewrite_params()](https://github.com/postgres/postgres/blob/src/backend/tcop/postgres.c#L686),
 [parse_analyze()](https://github.com/postgres/postgres/blob/src/backend/parser/analyze.c#L100).
 
 *Inputs:*
@@ -607,18 +629,19 @@ Used in several internal methods:
 
 Called at the beginning of any execution of any query plan.
 
-Note: when it set, replaces the [standard_ExecutorStart()](https://github.com/postgres/postgres/blob/src/backend/executor/execMain.c#L149), 
-which contains a lot of predefined logic. 
-Consider inclusion of the standard executor to the hook handler 
+Note: when it set, replaces the [standard_ExecutorStart()](https://github.com/postgres/postgres/blob/src/backend/executor/execMain.c#L149),
+which contains a lot of predefined logic.
+Consider inclusion of the standard executor to the hook handler
 if you assume adding your logic atop.
 
 *Inputs:*
 
-* <i>QueryDesc *</i> <b>queryDesc</b> — created by CreateQueryDesc, 
-tupDesc field of the QueryDesc is filled in to describe the tuples that will be 
+* <i>QueryDesc *</i> <b>queryDesc</b> — created by CreateQueryDesc,
+tupDesc field of the QueryDesc is filled in to describe the tuples that will be
 returned, and the internal fields (estate and planstate) are set up.
 * <i>int</i> <b>eflags</b> — contains flag bits as described in executor.h.
 
+----
 
 <a name="ExecutorRun_hook" href="#ExecutorRun_hook">#</a> <i>void</i> <b>ExecutorRun_hook</b>(queryDesc, direction, count, execute_once) [<>](https://github.com/postgres/postgres/blob/master/src/include/executor/executor.h#L73 "Source")
 
@@ -629,19 +652,20 @@ Replaces [standard_ExecutorRun()](https://github.com/postgres/postgres/blob/src/
 *Inputs:*
 
 * <i>QueryDesc *</i> <b>queryDesc</b> — query descriptor from the traffic cop.
-* <i>ScanDirection</i> <b>direction</b> - if value is NoMovementScanDirection then nothing is done 
+* <i>ScanDirection</i> <b>direction</b> - if value is NoMovementScanDirection then nothing is done
 except to start up/shut down the destination.
-* <i>uint64</i> <b>count</b> — count = 0 is interpreted as no portal limit, i.e., 
-run to completion.  Also note that the count limit is only applied to 
+* <i>uint64</i> <b>count</b> — count = 0 is interpreted as no portal limit, i.e.,
+run to completion.  Also note that the count limit is only applied to
 retrieved tuples, not for instance to those inserted/updated/deleted by a ModifyTable plan node.
 * <i>bool</i> <b>execute_once</b> — becomes equal to true after first execution.
 
 *Output:*
 
-This hook should not provide any output. However output tuples (if any) are sent to 
-the destination receiver specified in the QueryDesc. 
+This hook should not provide any output. However output tuples (if any) are sent to
+the destination receiver specified in the QueryDesc.
 The number of tuples processed at the top level can be found in estate->es_processed.
 
+----
 
 <a name="ExecutorFinish_hook" href="#ExecutorFinish_hook">#</a> <i>void</i> <b>ExecutorFinish_hook</b>(queryDesc) [<>](https://github.com/postgres/postgres/blob/master/src/include/executor/executor.h#L77 "Source")
 
@@ -660,6 +684,7 @@ Called at the end of execution of any query plan.
 
 * <i>QueryDesc *</i> <b>queryDesc</b> — query descriptor from the traffic cop.
 
+----
 
 <a name="ProcessUtility_hook" href="#ProcessUtility_hook">#</a> <i>void</i> <b>ProcessUtility_hook</b>(pstmt, queryString, context, params, queryEnv, dest, completionTag) [<>](https://github.com/postgres/postgres/blob/master/src/include/tcop/utility.h#L78 "Source")
 
@@ -672,16 +697,16 @@ This hook should not provide any output.
 *Inputs:*
 
 * <i>PlannedStmt *</i> <b>pstmt</b> — PlannedStmt wrapper for the utility statement
-* <i>const char *</i> <b>queryString</b> — original source text of command, 
+* <i>const char *</i> <b>queryString</b> — original source text of command,
 may be passed multiple times when processing a query string
-containing multiple semicolon-separated statements. pstmt->stmt_location and pstmt->stmt_len 
+containing multiple semicolon-separated statements. pstmt->stmt_location and pstmt->stmt_len
 indicates the substring containing the current statement.
-* <i>ProcessUtilityContext</i> <b>context</b> — identifies source of statement 
+* <i>ProcessUtilityContext</i> <b>context</b> — identifies source of statement
 (toplevel client command, non-toplevel client command, subcommand of a larger utility command)
 * <i>ParamListInfo</i> <b>params</b> — parameters of an execution.
 * <i>QueryEnvironment *</i> <b>queryEnv</b> — execution environment, optional, can be NULL.
 * <i>DestReceiver *</i> <b>dest</b> — results receiver.
-* <i>char *</i> <b>completionTag</b> — points to a buffer of size COMPLETION_TAG_BUFSIZE 
+* <i>char *</i> <b>completionTag</b> — points to a buffer of size COMPLETION_TAG_BUFSIZE
 in which to store a command completion status string
 
 
@@ -692,16 +717,16 @@ in which to store a command completion status string
 
 <a name="func_setup" href="#func_setup">#</a> <i>void</i> <b>func_setup</b>(estate, func) [<>](https://github.com/postgres/postgres/blob/master/src/pl/plpgsql/src/plpgsql.h#L1136 "Source")
 
-Hook for intercepting PLpgSQL function pre-init phase. 
+Hook for intercepting PLpgSQL function pre-init phase.
 
-This hook is called when we start a function before we've initialized 
+This hook is called when we start a function before we've initialized
 the local variables defined by the function.
-Can be useful for time measuring of а function initialization in tandem 
-with [func_beg()](Detailed.md#func_beg) and for measuring total execution time 
+Can be useful for time measuring of а function initialization in tandem
+with [func_beg()](Detailed.md#func_beg) and for measuring total execution time
 with the help of [func_end()](Detailed.md#func_end).
 
-Before any call to func_setup, PLpgSQL fills in the error_callback 
-and assign_expr fields with pointers to its own plpgsql_exec_error_callback 
+Before any call to func_setup, PLpgSQL fills in the error_callback
+and assign_expr fields with pointers to its own plpgsql_exec_error_callback
 and exec_assign_expr functions.
 
 *Inputs:*
@@ -709,24 +734,26 @@ and exec_assign_expr functions.
 * <i>PLpgSQL_execstate *</i> <b>estate</b> — runtime execution data.
 * <i>PLpgSQL_function *</i> <b>func</b> — PLpgSQL compiled function.
 
+----
 
 <a name="func_beg" href="#func_beg">#</a> <i>void</i> <b>func_beg</b>(estate, func) [<>](https://github.com/postgres/postgres/blob/master/src/pl/plpgsql/src/plpgsql.h#L1137 "Source")
 
-Hook for intercepting post-init phase. 
+Hook for intercepting post-init phase.
 
-This hook is called when we start PLpgSQL function, after we've initialized 
+This hook is called when we start PLpgSQL function, after we've initialized
 the local variables.
-The hook can be used for pre-validation of a function arguments. 
+The hook can be used for pre-validation of a function arguments.
 
 *Inputs:*
 
 * <i>PLpgSQL_execstate *</i> <b>estate</b> — runtime execution data.
 * <i>PLpgSQL_function *</i> <b>func</b> — PLpgSQL compiled function.
 
+----
 
 <a name="func_end" href="#func_end">#</a> <i>void</i> <b>func_end</b>(estate, func) [<>](https://github.com/postgres/postgres/blob/master/src/pl/plpgsql/src/plpgsql.h#L1138 "Source")
 
-Hook for intercepting end of a function. 
+Hook for intercepting end of a function.
 
 This hook is called at the end of PLpgSQL function.
 Can be used as a function callback.
@@ -736,6 +763,7 @@ Can be used as a function callback.
 * <i>PLpgSQL_execstate *</i> <b>estate</b> — runtime execution data.
 * <i>PLpgSQL_function *</i> <b>func</b> — PLpgSQL compiled function.
 
+----
 
 <a name="stmt_beg" href="#stmt_beg">#</a> <i>void</i> <b>stmt_beg</b>(estate, stmt) [<>](https://github.com/postgres/postgres/blob/master/src/pl/plpgsql/src/plpgsql.h#L1139 "Source")
 
@@ -746,6 +774,7 @@ Called before each statement of a function.
 * <i>PLpgSQL_execstate *</i> <b>estate</b> — runtime execution data.
 * <i>PLpgSQL_stmt *</i> <b>stmt</b> — execution node.
 
+----
 
 <a name="stmt_end" href="#stmt_end">#</a> <i>void</i> <b>stmt_end</b>(estate, stmt) [<>](https://github.com/postgres/postgres/blob/master/src/pl/plpgsql/src/plpgsql.h#L1140 "Source")
 
@@ -755,5 +784,3 @@ Called after each statement of a function.
 
 * <i>PLpgSQL_execstate *</i> <b>estate</b> — runtime execution data.
 * <i>PLpgSQL_stmt *</i> <b>stmt</b> — execution node.
-
-
