@@ -41,6 +41,10 @@
 //ClientAuthentication_hook
 #include "client_authentication.c"
 
+
+//shmem_startup
+#include "shmem_startup.c"
+
 PG_MODULE_MAGIC;
 
 /* Function definitions */
@@ -56,13 +60,18 @@ void _PG_init(void)
   elog(WARNING, "all_hooks init");
 
 
+  // shmem_startup_hook
+  elog(WARNING,"hooking: shmem_startup_hook");
+  ah_original_shmem_startup_hook = shmem_startup_hook;
+  shmem_startup_hook = ah_shmem_startup_hook;
+
   // planner_hook
   elog(WARNING,"hooking: planner_hook");
   ah_original_planner_hook = planner_hook;
   planner_hook = ah_planner_hook;
 
   // ProcessUtility_hook
-	elog(WARNING,"hooking: ProcessUtility_hook");
+  elog(WARNING,"hooking: ProcessUtility_hook");
   ah_original_ProcessUtility_hook = ProcessUtility_hook;
   ProcessUtility_hook = ah_ProcessUtility_hook;
 
@@ -82,10 +91,10 @@ void _PG_init(void)
   ah_original_ExecutorEnd_hook = ExecutorEnd_hook;
   ExecutorEnd_hook = ah_ExecutorEnd_hook;
 
-	// ExecutorCheckPerms_hook
-	elog(WARNING,"hooking: ExecutorCheckPerms_hook");
-	ah_original_ExecutorCheckPerms_hook = ExecutorCheckPerms_hook;
-	ExecutorCheckPerms_hook = ah_ExecutorCheckPerms_hook;
+  // ExecutorCheckPerms_hook
+  elog(WARNING,"hooking: ExecutorCheckPerms_hook");
+  ah_original_ExecutorCheckPerms_hook = ExecutorCheckPerms_hook;
+  ExecutorCheckPerms_hook = ah_ExecutorCheckPerms_hook;
 
   //ExecutorFinish_hook_type
   elog(WARNING,"hooking: ExecutorFinish_hook");
@@ -103,7 +112,6 @@ void _PG_init(void)
   fmgr_hook = ah_fmgr_hook;
 
   // check_password_hook
-
   elog(WARNING,"hooking: check_password_hook");
   ah_original_check_password_hook = check_password_hook;
   check_password_hook = ah_check_password_hook;
@@ -134,9 +142,9 @@ void _PG_fini(void)
     ExecutorRun_hook = ah_original_ExecutorRun_hook;
     ExecutorEnd_hook = ah_original_ExecutorEnd_hook;
     ExecutorFinish_hook = ah_original_ExecutorFinish_hook;
-	  ExecutorCheckPerms_hook = ah_original_ExecutorCheckPerms_hook;
-	  emit_log_hook = ah_original_emit_log_hook;
+    ExecutorCheckPerms_hook = ah_original_ExecutorCheckPerms_hook;
+    emit_log_hook = ah_original_emit_log_hook;
     fmgr_hook = ah_original_fmgr_hook;
     check_password_hook = ah_original_check_password_hook;
-
+    shmem_startup_hook = ah_original_shmem_startup_hook;
 }
