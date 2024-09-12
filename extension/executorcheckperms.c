@@ -1,9 +1,9 @@
 #include "executor/executor.h"
 
 static ExecutorCheckPerms_hook_type ah_original_ExecutorCheckPerms_hook = NULL;
-ExecutorCheckPerms_hook_type ah_ExecutorCheckPerms_hook (List* , bool );
+static bool ah_ExecutorCheckPerms_hook (List*, bool );
 
-bool ah_ExecutorCheckPerms_hook (List* tableList, bool abort){
+static bool ah_ExecutorCheckPerms_hook (List* tableList, bool abort){
 
 	elog(DEBUG1, "ExecutorCheckPerms_hook called");
 
