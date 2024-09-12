@@ -25,6 +25,9 @@
 //fmgr_hook
 #include "fmgr.c"
 
+// PLPGSQL
+#include "plpgsql.c"
+
 // planner_hook
 #include "planner.c"
 
@@ -57,7 +60,18 @@ void _PG_fini(void);
 // Called upon extension load.
 void _PG_init(void)
 {
-  elog(WARNING, "all_hooks init");
+	PLpgSQL_plugin **plugin_ptr;
+
+	elog(WARNING, "all_hooks init");
+
+	elog(WARNING,"hooking: plpgsql");
+	/* Link us into the PL/pgSQL executor. */
+	plugin_ptr = (PLpgSQL_plugin **)find_rendezvous_variable("PLpgSQL_plugin");
+	ah_original_plpgsql_plugin = *plugin_ptr;
+	*plugin_ptr = &ah_plugin_funcs;
+
+
+
 
 
   // shmem_startup_hook
@@ -77,9 +91,9 @@ void _PG_init(void)
 
 
   // ExecutorStart_hook
-	elog(WARNING,"hooking: ExecutorStart_hook");
-	ah_original_ExecutorStart_hook = ExecutorStart_hook;
-	ExecutorStart_hook = ah_ExecutorStart_hook;
+  elog(WARNING,"hooking: ExecutorStart_hook");
+  ah_original_ExecutorStart_hook = ExecutorStart_hook;
+  ExecutorStart_hook = ah_ExecutorStart_hook;
 
   //ExecutorRun_hook
   elog(WARNING,"hooking: ExecutorRun_hook");
@@ -111,6 +125,8 @@ void _PG_init(void)
   ah_original_fmgr_hook = fmgr_hook;
   fmgr_hook = ah_fmgr_hook;
 
+
+
   // check_password_hook
   elog(WARNING,"hooking: check_password_hook");
   ah_original_check_password_hook = check_password_hook;
@@ -134,6 +150,12 @@ void _PG_init(void)
 void _PG_fini(void)
 {
     // Return back the original hook value.
+
+	PLpgSQL_plugin **plugin_ptr;
+	plugin_ptr = (PLpgSQL_plugin **)find_rendezvous_variable("PLpgSQL_plugin");
+	*plugin_ptr = ah_original_plpgsql_plugin;
+	ah_original_plpgsql_plugin = NULL;
+
     ClientAuthentication_hook = ah_original_client_authentication_hook;
     ExecutorEnd_hook = ah_original_ExecutorEnd_hook;
     planner_hook = ah_original_planner_hook;
