@@ -16,9 +16,12 @@ create_upper_paths_hook_type
 
   emit_log_hook_type
 
+
 explain_get_index_name_hook_type
 
   fmgr_hook_type
+    stmt_beg
+    stmt_end
 
 get_attavgwidth_hook_type
 get_index_stats_hook_type
