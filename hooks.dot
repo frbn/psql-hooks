@@ -13,25 +13,34 @@ digraph hooks {
 
 
 	subgraph cluster_0 {label="(fnmgr)" ;
-    	fmgr_hook1                   [shape=ellipse][label="fmgr_hook \n(security policy before)"];
-    	fmgr_hook2                   [shape=ellipse][label="fmgr_hook \n(security policy after)"];
+    	fmgr_hook1                  [shape=ellipse][label="fmgr_hook \n(security policy before)"];
+    	fmgr_hook2                  [shape=ellipse][label="fmgr_hook \n(security policy after)"];
+    	func_init                   [shape=ellipse][label="func_init \n(before var init)"];
     	func_beg                    [shape=ellipse][label="func_beg \n(after var init)"];
     	func_end                    [shape=ellipse][label="func_end \n(CallBack)"];
-    	func_setup                  [shape=ellipse][label="func_setup \n(before var init)"];
+    	ExecutorRun_hook            [shape=ellipse][label="ExecutorRun_hook"];
+    	ExecutorFinish_hook            [shape=ellipse][label="ExecutorFinish_hook"];
+    	ExecutorEnd_hook            [shape=ellipse][label="ExecutorEnd_hook"];
+
     	"Statement of a function" ;
       "Execution of a function" ;
     	needs_fmgr_hook             [shape=ellipse];
     	stmt_beg                    [shape=ellipse];
     	stmt_end                    [shape=ellipse];
 
-    	"Execution of a function" -> planner_hook -> needs_fmgr_hook ;
-      needs_fmgr_hook -> ExecutorStart_hook -> ExecutorCheckPerms_hook;
+    	"Execution of a function" -> fmgr_hook1;
+    	fmgr_hook1 -> func_init  -> func_beg;
+    	stmt_beg -> "Statement of a function" ;
+      planner_hook -> needs_fmgr_hook ;
+      needs_fmgr_hook -> ExecutorStart ;
       needs_fmgr_hook -> ExecutorRun_hook -> fmgr_hook1 -> planner_hook;
-    	fmgr_hook1 -> func_setup  -> func_beg;
-    	fmgr_hook2 -> func_end;
-    	stmt_beg -> "Statement of a function" -> stmt_end;
+    	"Statement of a function" -> planner_hook ;
+      standard_planner -> ExecutorStart -> stmt_end;
     	func_beg -> stmt_beg;
-    	stmt_end -> fmgr_hook2;
+    	stmt_end -> func_end;
+    	func_end -> fmgr_hook2 ;
+      fmgr_hook2 -> ExecutorFinish_hook -> ExecutorEnd_hook;
+
     }
 
  	subgraph cluster_1 { label="Object access";
@@ -58,18 +67,17 @@ digraph hooks {
 
 	subgraph cluster_3 {
     label="Query Plan Execution";
-    ExecutorStart_hook          [shape=ellipse];
-    ExecutorCheckPerms_hook     [shape=ellipse];
-    ExecutorRun_hook            [shape=ellipse];
-    ExecutorEnd_hook            [shape=ellipse];
-    ExecutorFinish_hook [shape=ellipse][label="ExecutorFinish_hook\n(After last ExecutorRun call)"];
-		"Beginning"
-        -> ExecutorStart_hook
-        -> ExecutorStart
-        -> ExecutorCheckPerms_hook
-		    -> ExecutorRun_hook
-        -> ExecutorFinish_hook
-		    -> ExecutorEnd_hook
+    QPExecutorStart_hook          [shape=ellipse][label="ExecutorStart_hook"];
+    QPExecutorCheckPerms_hook     [shape=ellipse][label="ExecutorCheckPerms_hook"];
+    QPExecutorRun_hook            [shape=ellipse][label="ExecutorRun_hook"];
+    QPExecutorEnd_hook            [shape=ellipse][label="ExecutorEnd_hook"];
+    QPExecutorFinish_hook [shape=ellipse][label="ExecutorFinish_hook\n(After last ExecutorRun call)"];
+		"ExecutorStart"
+        -> QPExecutorStart_hook
+        -> QPExecutorCheckPerms_hook
+		    -> QPExecutorRun_hook
+        -> QPExecutorFinish_hook
+		    -> QPExecutorEnd_hook
     	-> "end of query plan";
 	}
 
