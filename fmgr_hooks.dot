@@ -1,5 +1,5 @@
 digraph hooks {
-    rankdir=TR
+    // rankdir=TR
     node [shape=box];
     nodesep=0.5;
     needs_fmgr_hook             [shape=ellipse];
@@ -30,7 +30,7 @@ digraph hooks {
       needs_fmgr_hook -> ExecutorStart ;
       needs_fmgr_hook -> ExecutorRun_hook -> fmgr_hook1 -> planner_hook;
     	"Statement of a function" -> planner_hook ;
-      ExecutorStart -> stmt_end -> ExecutorStart ;
+      ExecutorStart -> stmt_end ;
     	func_beg -> stmt_beg;
     	stmt_end -> func_end;
     	func_end -> fmgr_hook2 ;
