@@ -22,6 +22,7 @@
 
 //needs_fmgr_hook
 #include "needs_fmgr.c"
+
 //fmgr_hook
 #include "fmgr.c"
 
@@ -34,7 +35,6 @@
 // ProcessUtility_hook
 #include "processutility.c"
 
-
 // emit_log_hook
 #include "emit_log.c"
 
@@ -43,7 +43,6 @@
 
 //ClientAuthentication_hook
 #include "client_authentication.c"
-
 
 //shmem_startup
 #include "shmem_startup.c"
@@ -71,9 +70,6 @@ void _PG_init(void)
 	*plugin_ptr = &ah_plugin_funcs;
 
 
-
-
-
   // shmem_startup_hook
   elog(WARNING,"hooking: shmem_startup_hook");
   ah_original_shmem_startup_hook = shmem_startup_hook;
@@ -88,7 +84,6 @@ void _PG_init(void)
   elog(WARNING,"hooking: ProcessUtility_hook");
   ah_original_ProcessUtility_hook = ProcessUtility_hook;
   ProcessUtility_hook = ah_ProcessUtility_hook;
-
 
   // ExecutorStart_hook
   elog(WARNING,"hooking: ExecutorStart_hook");
@@ -125,8 +120,6 @@ void _PG_init(void)
   ah_original_fmgr_hook = fmgr_hook;
   fmgr_hook = ah_fmgr_hook;
 
-
-
   // check_password_hook
   elog(WARNING,"hooking: check_password_hook");
   ah_original_check_password_hook = check_password_hook;
@@ -137,12 +130,10 @@ void _PG_init(void)
   ah_original_client_authentication_hook = ClientAuthentication_hook;
   ClientAuthentication_hook = ah_ClientAuthentication_hook;
 
-
   // emit_log_hook
   elog(WARNING,"hooking: emit_log_hook");
   ah_original_emit_log_hook = emit_log_hook;
   emit_log_hook = ah_emit_log_hook;
-
 
 }
 
