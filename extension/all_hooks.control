@@ -1,5 +1,5 @@
 # all_hooks extension
-comment = 'module that uses all hooks possible'
+comment = 'module that uses all possible hooks'
 default_version = '0.1'
 module_pathname = '$libdir/all_hooks'
 relocatable = true
