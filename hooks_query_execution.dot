@@ -1,0 +1,41 @@
+digraph hooks {
+    //rankdir=TR
+    node [shape=box];
+    nodesep=0.5;
+    ExecutorCheckPerms_hook     [shape=ellipse];
+    emit_log_hook               [shape=ellipse][label="emit_log_hook\n(custom logging process)"];
+
+
+	subgraph cluster_3 {
+    label="Query Plan Execution";
+    ExecutorStart_hook          [shape=ellipse];
+    ExecutorCheckPerms_hook     [shape=ellipse];
+    ExecutorRun_hook            [shape=ellipse];
+    ExecutorEnd_hook            [shape=ellipse];
+    ExecutorFinish_hook [shape=ellipse][label="ExecutorFinish_hook\n(After last ExecutorRun call)"];
+    planner_hook                [shape=ellipse];
+    ProcessUtility_hook         [shape=ellipse];
+		"Beginning"
+        -> ProcessUtility_hook
+        -> "standard_ProcessUtility()"
+        -> planner_hook
+        -> standard_planner
+        -> Query_Optimizer
+        -> ExecutorStart_hook
+        -> ExecutorStart
+        -> ExecutorCheckPerms_hook
+		    -> ExecutorRun_hook
+        -> ExecutorFinish_hook
+		    -> ExecutorEnd_hook
+    	-> "end of query plan execution";
+	}
+
+
+
+
+
+
+    "something to log"
+        -> emit_log_hook
+        -> "Standard log process"  ;
+}
