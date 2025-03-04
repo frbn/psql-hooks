@@ -36,6 +36,9 @@
 //check_password_hook
 #include "commands/user.h"
 
+//shmem_startup
+#include "storage/shmem.h"
+#include "storage/ipc.h"
 
 // ----------
 
@@ -87,7 +90,10 @@ void ah_check_password_hook(const char *username, const char *shadow_pass, Passw
 static ClientAuthentication_hook_type ah_original_client_authentication_hook = NULL;
 static void ah_ClientAuthentication_hook(Port * port, int status);
 
-// ----------------------------------------
+//shmem_startup
+static shmem_startup_hook_type ah_original_shmem_startup_hook = NULL;
+void ah_shmem_startup_hook(void);
+
 
 // Executor
 
@@ -102,6 +108,10 @@ void ah_ExecutorStart_hook (QueryDesc *queryDesc, int eflags);
 
 // ExecutorRun_hook
 static ExecutorRun_hook_type ah_original_ExecutorRun_hook = NULL;
+// ExecutorFinish_hook
+static ExecutorFinish_hook_type ah_original_ExecutorFinish_hook = NULL;
+void ah_ExecutorFinish_hook(QueryDesc *queryDesc);
+// ExecutorRun_hook
 void ah_ExecutorRun_hook
 (
 	QueryDesc *queryDesc,
@@ -109,11 +119,6 @@ void ah_ExecutorRun_hook
 	uint64 count,
 	bool execute_once
 );
-
-// ExecutorFinish_hook
-static ExecutorFinish_hook_type ah_original_ExecutorFinish_hook = NULL;
-void ah_ExecutorFinish_hook(QueryDesc *queryDesc);
-
 
 // planner_hook
 static planner_hook_type ah_original_planner_hook  = NULL;
@@ -134,7 +139,8 @@ void ah_ProcessUtility_hook(
 // executeCheckPerms_hook
 static bool ah_ExecutorCheckPerms_hook (List*, List* , bool );
 
-// ---------
+// ----------------------------------------
+// ----------------------------------------
 // FUNCTIONS
 
 // planner_hook
@@ -167,10 +173,32 @@ void ah_ProcessUtility_hook(
 	QueryCompletion *completionTag)
 {
     elog(WARNING,"ProcessUtility hook called");
-	if (ah_original_ProcessUtility_hook){
-		ah_original_ProcessUtility_hook(pstmt, queryString,readOnlyTree,context,params,queryEnv,dest, completionTag);
-    }else{
-		standard_ProcessUtility(pstmt,queryString, readOnlyTree, context, params, queryEnv, dest, completionTag);
+	if (ah_original_ProcessUtility_hook)
+	{
+		ah_original_ProcessUtility_hook
+		(
+			pstmt, 
+			queryString,
+			readOnlyTree,
+			context,params,
+			queryEnv,
+			dest,
+			completionTag
+		);
+    }
+	else
+	{
+		standard_ProcessUtility
+		(
+			pstmt,
+			queryString,
+			readOnlyTree,
+			context,
+			params,
+			queryEnv,
+			dest,
+			completionTag
+		);
 	}
 }
 
@@ -190,9 +218,12 @@ void ah_ExecutorStart_hook (QueryDesc *queryDesc, int eflags)
 
 	elog(DEBUG1, "ExecutorStart_hook called");
 
-	if (ah_original_ExecutorStart_hook){
+	if (ah_original_ExecutorStart_hook)
+	{
 		ah_original_ExecutorStart_hook(queryDesc, eflags);
-	}else{
+	}
+	else
+	{
 		standard_ExecutorStart(queryDesc, eflags);
 	}
 }
@@ -207,23 +238,30 @@ void ah_ExecutorRun_hook(
 
     elog(WARNING, "ExecutorRun_hook called");
 
-  if (ah_original_ExecutorRun_hook){
-    ah_original_ExecutorRun_hook(queryDesc, direction, count, execute_once);
+	if (ah_original_ExecutorRun_hook)
+	{
+    	ah_original_ExecutorRun_hook(queryDesc, direction, count, execute_once);
 
-  }else{
-      standard_ExecutorRun(queryDesc, direction, count, execute_once);
-  }
+	}
+	else
+	{
+    	standard_ExecutorRun(queryDesc, direction, count, execute_once);
+  	}
 }
 
 // ExecutorFinish_hook
-void ah_ExecutorFinish_hook(QueryDesc *queryDesc){
+void ah_ExecutorFinish_hook(QueryDesc *queryDesc)
+{
 
   elog(WARNING, "ExecutorFinish_hook called");
-    if (ah_original_ExecutorFinish_hook){
+    if (ah_original_ExecutorFinish_hook)
+	{
     ah_original_ExecutorFinish_hook(queryDesc);
-    }else{
+    }
+	else
+	{
       standard_ExecutorFinish(queryDesc);
-  }
+	}
 }
 
 // ExecutorEnd_hook
@@ -237,7 +275,8 @@ void ah_ExecutorEnd_hook(QueryDesc *q)
 }
 
 // fmgr_hook
-void ah_fmgr_hook(FmgrHookEventType event, FmgrInfo * flinfo, Datum *arg){
+void ah_fmgr_hook(FmgrHookEventType event, FmgrInfo * flinfo, Datum *arg)
+{
 
   elog(WARNING,"fmgr hook called");
   if (ah_original_fmgr_hook)
@@ -247,15 +286,13 @@ void ah_fmgr_hook(FmgrHookEventType event, FmgrInfo * flinfo, Datum *arg){
 // needs_fmgr_hook
 bool ah_needs_fmgr_hook (Oid fn_oid)
 {
-	elog(WARNING, "needs_fmgr_hook_type called");
-	return true;
+ 	// return true;
 	if (ah_original_needs_fmgr_hook)
 	{
 		return ah_original_needs_fmgr_hook(fn_oid);
-	}else
-	{
-		return needs_fmgr_hook(fn_oid);
 	}
+
+	elog(WARNING, "needs_fmgr_hook called");
 }
  
 // PLPGSQL
@@ -285,14 +322,17 @@ static void ah_plpgsql_func_end_hook(PLpgSQL_execstate *estate, PLpgSQL_function
 }
 
 // emit_log_hook
-void ah_emit_log_hook(ErrorData * eData){
+void ah_emit_log_hook(ErrorData * eData)
+{
 
-	if (! ah_emit_log_hook_in_hook){
+	if (! ah_emit_log_hook_in_hook)
+	{
 		ah_emit_log_hook_in_hook = true;
 		elog(WARNING, "ah_emit_log_hook called");
 	}
 
-	if (ah_original_emit_log_hook){
+	if (ah_original_emit_log_hook)
+	{
 		ah_original_emit_log_hook(eData);
 	}
 
@@ -300,17 +340,19 @@ void ah_emit_log_hook(ErrorData * eData){
 }
 
 //check_password_hook
-void ah_check_password_hook(const char *username, const char *shadow_pass, PasswordType password_type, Datum validuntil_time, bool validuntil_null){
+void ah_check_password_hook(const char *username, const char *shadow_pass, PasswordType password_type, Datum validuntil_time, bool validuntil_null)
+{
 
   elog(WARNING,"check_password_hook called");
 
-	if (ah_original_check_password_hook){
+	if (ah_original_check_password_hook)
+	{
 		ah_original_check_password_hook(username, shadow_pass, password_type, validuntil_time, validuntil_null);
 	}
-
 }
 
-void ah_ClientAuthentication_hook(Port * port, int status){
+void ah_ClientAuthentication_hook(Port * port, int status)
+{
 
    // If any other extension registered its own hook handler,
     // call it before performing our own logic.
@@ -325,9 +367,16 @@ void ah_ClientAuthentication_hook(Port * port, int status){
     }
 }
 
-
 //shmem_startup
-#include "shmem_startup.c"
+void ah_shmem_startup_hook(void)
+{
+
+	if (ah_original_shmem_startup_hook){
+		ah_original_shmem_startup_hook();
+	}
+	elog(WARNING,"shmem_startup_hook called");
+
+}
 
 PG_MODULE_MAGIC;
 
