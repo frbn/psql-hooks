@@ -286,13 +286,13 @@ void ah_fmgr_hook(FmgrHookEventType event, FmgrInfo * flinfo, Datum *arg)
 // needs_fmgr_hook
 bool ah_needs_fmgr_hook (Oid fn_oid)
 {
- 	// return true;
 	if (ah_original_needs_fmgr_hook)
 	{
 		return ah_original_needs_fmgr_hook(fn_oid);
 	}
 
 	elog(WARNING, "needs_fmgr_hook called");
+ 	return true;
 }
  
 // PLPGSQL
