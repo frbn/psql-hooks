@@ -175,30 +175,11 @@ void ah_ProcessUtility_hook(
     elog(WARNING,"ProcessUtility hook called");
 	if (ah_original_ProcessUtility_hook)
 	{
-		ah_original_ProcessUtility_hook
-		(
-			pstmt, 
-			queryString,
-			readOnlyTree,
-			context,params,
-			queryEnv,
-			dest,
-			completionTag
-		);
+		ah_original_ProcessUtility_hook(pstmt, queryString,readOnlyTree,context,params,queryEnv,dest, completionTag);
     }
 	else
 	{
-		standard_ProcessUtility
-		(
-			pstmt,
-			queryString,
-			readOnlyTree,
-			context,
-			params,
-			queryEnv,
-			dest,
-			completionTag
-		);
+		standard_ProcessUtility(pstmt,queryString, readOnlyTree, context, params, queryEnv, dest, completionTag);
 	}
 }
 
@@ -238,8 +219,7 @@ void ah_ExecutorRun_hook(
 
     elog(WARNING, "ExecutorRun_hook called");
 
-	if (ah_original_ExecutorRun_hook)
-	{
+	if (ah_original_ExecutorRun_hook){
     	ah_original_ExecutorRun_hook(queryDesc, direction, count, execute_once);
 
 	}
@@ -275,8 +255,7 @@ void ah_ExecutorEnd_hook(QueryDesc *q)
 }
 
 // fmgr_hook
-void ah_fmgr_hook(FmgrHookEventType event, FmgrInfo * flinfo, Datum *arg)
-{
+void ah_fmgr_hook(FmgrHookEventType event, FmgrInfo * flinfo, Datum *arg){
 
   elog(WARNING,"fmgr hook called");
   if (ah_original_fmgr_hook)
@@ -286,13 +265,15 @@ void ah_fmgr_hook(FmgrHookEventType event, FmgrInfo * flinfo, Datum *arg)
 // needs_fmgr_hook
 bool ah_needs_fmgr_hook (Oid fn_oid)
 {
+	elog(WARNING, "needs_fmgr_hook_type called");
 	if (ah_original_needs_fmgr_hook)
 	{
+	  elog(WARNING, "ah_original_needs_fmgr_hook called");
 		return ah_original_needs_fmgr_hook(fn_oid);
+	}else
+	{
+		return true;
 	}
-
-	elog(WARNING, "needs_fmgr_hook called");
- 	return true;
 }
  
 // PLPGSQL
